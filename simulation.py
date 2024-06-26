@@ -27,6 +27,24 @@ class Node:
         self._partner = None
         self._color = WHITE
 
+    def connect(self, other: "Node") -> None:
+        self._friends.append(other)
+        if other in self._neighbors:
+            self.straight_edge(other)
+        else:
+            self.curved_edge(other)
+    
+    def straight_edge(self, other: "Node") -> None:
+        pygrame.draw.line(surface, WHITE, self._pos, other.pos, 1)
+
+    def curved_edge(self, other: "Node") -> None:
+        # self must be left node
+        pygame.draw.arc(surface, WHITE, (self._pos[0]-0.5*abs(self._pos[0]-other.pos[0]), self._pos[1], abs(self._pos[0]-other.pos[0]), abs(self._pos[1]-other.pos[1])+100), 0, math.pi/2, 2)
+    """
+    pygame.draw.arc(surface, WHITE, (200, 200, 100, 20), 0, math.pi, 1)
+    pygame.draw.circle(surface, WHITE, (200, 215), 2)
+    pygame.draw.circle(surface, WHITE, (300, 215), 2)
+    """
     def draw_node(self) -> None:
         pygame.draw.circle(surface, self._color, self._pos, 5)
     
@@ -122,16 +140,20 @@ def main() -> None:
         surface.fill(BLACK)
         
         # update()
+        i = 0
         for node in nodes:
             node.draw_node()
+            if i == 2:
+                node._color = (255, 0, 0)
+                nodes[10]._color = (0, 255, 0)
+                node.connect(nodes[10])
+            
+            i += 1
 
         display.flip()
 
-
     pygame.quit()
     sys.exit()
-
-
 
 if __name__ == "__main__":
     main()
