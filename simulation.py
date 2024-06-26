@@ -1,11 +1,15 @@
 import pygame
 import sys
 import random
+import math
 
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 900
 BLACK = [0, 0, 0]
 WHITE = [255, 255, 255]
+MIN_SEPERATION = 20
+NUM_NODES = 54
+OFFSET = 50
 
 pygame.init()
 display = pygame.display
@@ -25,6 +29,14 @@ class Node:
 
     def draw_node(self) -> None:
         pygame.draw.circle(surface, self._color, self._pos, 5)
+    
+    @property
+    def pos(self) -> list[int]:
+        return self._pos
+
+    @pos.setter
+    def pos(self, newpos: list[int]) -> None:
+        self._pos = newpos
 
     @property
     def neighbors(self) -> list["Node"]:
@@ -61,22 +73,42 @@ class Node:
     @property
     def gender(self) -> bool:
         return self._gender
+    
+    @property
+    def color(self) -> list[int]:
+        return self._color
 
     @color.setter
-    def color(self, newcolor: list[float]) -> None:
+    def color(self, newcolor: list[int]) -> None:
         self._color = newcolor
 
+def calculate_distance(n1: list[int], n2: list[int]) -> float:
+    return sum([(n1[i]-n2[i])**2 for i in range(len(n1))])**0.5
 
-#def update() -> None:
-    
+def update() -> None:
+    pass
+
+
+def generate_nodes() -> list[Node]:
+    nodes = []
+    n = round(NUM_NODES**0.5)
+    space = math.floor((SCREEN_WIDTH-OFFSET)/n) # spacing for nodes
+    for i in range(n):
+        for j in range(n):
+            x, y = space * i + math.floor(OFFSET), space * j + math.floor(OFFSET)
+            if i % 2 != 0:
+                y += math.floor(OFFSET)
+            
+            nodes.append(Node([x, y]))
+            
+    return nodes
+
 
 def main() -> None:
     run = True
     clock = pygame.time.Clock()
+    nodes = generate_nodes()
 
-    n = Node([500, 500])
-    nodes = [n]
-        
     while run:
         clock.tick(60)
         keys = pygame.key.get_pressed()
@@ -89,7 +121,7 @@ def main() -> None:
 
         surface.fill(BLACK)
         
-       # update()
+        # update()
         for node in nodes:
             node.draw_node()
 
