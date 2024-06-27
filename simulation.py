@@ -27,19 +27,37 @@ class Node:
         self._partner = None
         self._color = WHITE
 
-    def connect(self, other: "Node") -> None:
+    def connect(self, other: "Node", nodes: list["Node"]) -> None:
         self._friends.append(other)
         if other in self._neighbors:
-            self.straight_edge(other)
+            pygame.draw.line(surface, WHITE, self._pos, other.pos, 1)
         else:
-            self.curved_edge(other)
-    
-    def straight_edge(self, other: "Node") -> None:
-        pygrame.draw.line(surface, WHITE, self._pos, other.pos, 1)
+            avoid = self.find_obstructions(other, nodes)
+            if self._pos[1] < other.pos[1]:
+                # lower
+                print(len(avoid))
+                for n in avoid:
+                    pygame.draw.line(surface, WHITE, (self._pos), (n.pos[0]-10, n.pos[1]+10), 1)
+                    
 
-    def curved_edge(self, other: "Node") -> None:
-        # self must be left node
-        pygame.draw.arc(surface, WHITE, (self._pos[0]-0.5*abs(self._pos[0]-other.pos[0]), self._pos[1], abs(self._pos[0]-other.pos[0]), abs(self._pos[1]-other.pos[1])+100), 0, math.pi/2, 2)
+            elif self._pos[1] > other.pos[1]:
+                # higher
+                pass
+
+
+    
+    def find_obstructions(self, other: "Node", nodes: list["Node"]) -> list["Node"]:
+        obstructors = []
+        m = (self._pos[1] - other.pos[1]) / (self._pos[0] - other._pos[0]) 
+        b = self._pos[1] - self._pos[0] * m
+        pygame.draw.line(surface, WHITE, (self._pos[0],m*self._pos[0]+b), (other.pos[0],m*other.pos[0]+b),1)
+        for n in nodes:
+            if abs(n.pos[1] - (n.pos[0] * m + b)) < 20 and calculate_distance(self, n) < calculate_distance(self, other) and n != self and n != other:
+                obstructors.append(n)
+
+        return obstructors
+
+
     """
     pygame.draw.arc(surface, WHITE, (200, 200, 100, 20), 0, math.pi, 1)
     pygame.draw.circle(surface, WHITE, (200, 215), 2)
@@ -101,11 +119,10 @@ class Node:
         self._color = newcolor
 
 def calculate_distance(n1: list[int], n2: list[int]) -> float:
-    return sum([(n1[i]-n2[i])**2 for i in range(len(n1))])**0.5
+    return sum([(n1.pos[i]-n2.pos[i])**2 for i in range(len(n1.pos))])**0.5
 
 def update() -> None:
     pass
-
 
 def generate_nodes() -> list[Node]:
     nodes = []
@@ -145,8 +162,8 @@ def main() -> None:
             node.draw_node()
             if i == 2:
                 node._color = (255, 0, 0)
-                nodes[10]._color = (0, 255, 0)
-                node.connect(nodes[10])
+                nodes[17]._color = (0, 255, 0)
+                node.connect(nodes[17], nodes)
             
             i += 1
 
