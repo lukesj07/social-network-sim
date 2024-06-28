@@ -44,11 +44,10 @@ class Node:
             cartx_other = other.pos[0] - SCREEN_WIDTH/2
             carty_other = SCREEN_HEIGHT/2 - other.pos[1]
 
-            m = (carty_self - carty_other) / (cartx_self - cartx_other) 
-            b = carty_self - cartx_self * m
-            
-            prev = self
             for n in avoid:
+                m = (carty_self - carty_other) / (cartx_self - cartx_other) 
+                b = carty_self - cartx_self * m
+
                 cartx_avoid = n.pos[0] - SCREEN_WIDTH/2
                 carty_avoid = SCREEN_HEIGHT/2 - n.pos[1]
 
@@ -61,10 +60,10 @@ class Node:
 
                 x1 += SCREEN_WIDTH/2
                 x2 += SCREEN_WIDTH/2
-                    
                 
                 m = (self._pos[1] - other.pos[1]) / (self._pos[0] - other.pos[0]) 
                 b = self._pos[1] - m*self._pos[0]
+
 
                 if self._pos[0] < other.pos[0]:
                     self.draw_around(other, min(x1, x2), max(x1, x2), min(x1, x2)*m+b, max(x1, x2)*m+b, n, r)
@@ -199,8 +198,8 @@ def main() -> None:
             node.draw_node()
             if i == 2:
                 node._color = (255, 0, 0)
-                nodes[15]._color = (0, 255, 0)
-                node.connect(nodes[15], nodes)
+                nodes[21]._color = (0, 255, 0)
+                node.connect(nodes[21], nodes)
             
             i += 1
 
