@@ -33,11 +33,38 @@ class Node:
             pygame.draw.line(surface, WHITE, self._pos, other.pos, 1)
         else:
             avoid = self.find_obstructions(other, nodes)
+            dx = 15 # sign depends on left or right?
+            cartx_self = self._pos[0] - SCREEN_WIDTH/2
+            carty_self = SCREEN_HEIGHT/2 - self._pos[1]
+            
+            cartx_other = other.pos[0] - SCREEN_WIDTH/2
+            carty_other = SCREEN_HEIGHT/2 - other.pos[1]
+
+
+            m = (carty_self - carty_other) / (cartx_self - cartx_other) 
+            b = carty_self - cartx_self * m
+
             if self._pos[1] < other.pos[1]:
                 # lower
-                print(len(avoid))
+                
+
+                #print(len(avoid))
                 for n in avoid:
-                    pygame.draw.line(surface, WHITE, (self._pos), (n.pos[0]-10, n.pos[1]+10), 1)
+                    cartx_avoid = n.pos[0] - SCREEN_WIDTH/2
+                    carty_avoid = SCREEN_HEIGHT/2 - n.pos[1]
+
+                    a = m**2+1
+                    b = 2*(m*b-m*carty_avoid-cartx_avoid)
+                    c = carty_avoid**2 - dx**2 + cartx_avoid - 2*b*carty_avoid + b**2
+                    
+                    x1 = (-b+math.sqrt(b**2-4*a*c))/(2*a)
+                    x2 = (-b-math.sqrt(b**2-4*a*c))/(2*a)
+
+                    x1 = x1 + SCREEN_WIDTH/2
+                    x2 = x1 + SCREEN_WIDTH/2
+                    pygame.draw.line(surface, WHITE, self._pos, m*x1+b, 1)
+                    pygame.draw.circle(surface, WHITE, n.pos, dx, 1)
+                    pygame.draw.line(surface, WHITE, m*x2+b, other.pos, 1)
                     
 
             elif self._pos[1] > other.pos[1]:
@@ -50,9 +77,9 @@ class Node:
         obstructors = []
         m = (self._pos[1] - other.pos[1]) / (self._pos[0] - other._pos[0]) 
         b = self._pos[1] - self._pos[0] * m
-        pygame.draw.line(surface, WHITE, (self._pos[0],m*self._pos[0]+b), (other.pos[0],m*other.pos[0]+b),1)
+        #pygame.draw.line(surface, WHITE, (self._pos[0],m*self._pos[0]+b), (other.pos[0],m*other.pos[0]+b),1)
         for n in nodes:
-            if abs(n.pos[1] - (n.pos[0] * m + b)) < 20 and calculate_distance(self, n) < calculate_distance(self, other) and n != self and n != other:
+            if abs(n.pos[1] - (n.pos[0] * m + b)) < 15 and calculate_distance(self, n) < calculate_distance(self, other) and n != self and n != other:
                 obstructors.append(n)
 
         return obstructors
