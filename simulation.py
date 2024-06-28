@@ -44,7 +44,7 @@ class Node:
             cartx_other = other.pos[0] - SCREEN_WIDTH/2
             carty_other = SCREEN_HEIGHT/2 - other.pos[1]
 
-            vertical = True if self._pos[0] == other.pos[0]
+            vertical = True if self._pos[0] == other.pos[0] else False
 
             x_intersects = []
             y_intersects = []
@@ -74,7 +74,7 @@ class Node:
                 if self._pos[1] < other.pos[1]:
                     #top to bottom
                     y_intersects.sort()
-                else
+                else:
                     y_intersects.sort(reverse=True)
             
 
